@@ -1,4 +1,5 @@
 /*jslint browser:true, esnext:true*/
+/*global $, majMot, valider */
 /*
 TODO:Choix de langue
 TODO:Difficulté
@@ -35,9 +36,9 @@ class Tdd {
             .addClass('mot')
             .text("??????")
             .appendTo($resultat)
-            .bind('transitionend', evtDelaiFini);
-        $resultat.append(affichageChoix());
-        $resultat.append(affichageScore());
+            .bind('transitionend', Tdd.evt.mot.transitionend);
+        $resultat.append(this.affichageChoix());
+        $resultat.append(this.affichageScore());
         return $resultat;
     }
     static piger(array) {
@@ -46,13 +47,20 @@ class Tdd {
     }
     static redemarrerChrono() {
         var duration = tdd.but - tdd.points;
-        if (tdd.difficulte === 1) duration += 1;
-        else if (tdd.difficulte >= 3) duration *= 1.5 - ((tdd.difficulte - 1) / (tdd.difficulte));
+        if (tdd.difficulte === 1) {
+            duration += 1;
+        } else if (tdd.difficulte >= 3) {
+            duration *= 1.5 - ((tdd.difficulte - 1) / (tdd.difficulte));
+        }
         tdd.regleTransition.MozTransitionDuration = duration + "s";
         setTimeout(function () {
             $('div.mot').text(tdd.mot).addClass("on");
             $("div.score").removeClass("correct erreur delai");
         }, tdd.pause);
+    }
+    static majScore() {
+        $("span.points").html(tdd.points);
+        $("span.but").html(tdd.but);
     }
 
     static setEvts() {
@@ -66,66 +74,66 @@ class Tdd {
                         }
                     }
                 }
+            },
+            mot: {
+                transitionend: () => {
+                    if (tdd.points >= tdd.but) {
+                        return;
+                    }
+                    if (tdd.difficulte > 2) {
+                        tdd.points = 0;
+                    } else {
+                        tdd.points -= 1;
+                    }
+                    // tdd.but += 1;
+                    $(".score").addClass("delai");
+                    this.majScore();
+                    majMot();
+                }
+            },
+            bouton: {
+                click: (e) => {
+                    var $this = $(e.target);
+                    var classe = $this.attr("class");
+                    valider(classe);
+                    this.majScore();
+                    if (!this.verifierVictoire()) {
+                        majMot();
+                    }
+                }
             }
         };
     }
     static init() {
         this.setEvts();
     }
+    static affichageChoix() {
+        var $resultat = $(document.createElement("div")).addClass("choix");
+        for (var ch in tdd.choix) {
+            var $bouton = this.affichageBouton(tdd.choix[ch], ch);
+            $resultat.append($bouton);
+            tdd.choix[ch] = $bouton;
+        }
+        return $resultat;
+    }
+    static affichageBouton(etiquette, classe) {
+        var $resultat = $(document.createElement('div'))
+            .addClass(classe)
+            .html(etiquette)
+            .click(Tdd.evt.bouton.click);
+        return $resultat;
+    }
+    static affichageScore() {
+        var $resultat = $('<div class="score"><span class="points">' + tdd.points + '</span>/<span class="but">' + tdd.but + '</span></div>');
+        return $resultat;
+    }
+    static verifierVictoire() {
+        if (tdd.points < tdd.but) {
+            return false;
+        }
+        $(".tdd").html('<div class="bravo">Bravo!</div>');
+        return true;
+    }
 }
 Tdd.init();
-
-function evtDelaiFini() {
-    if (tdd.points >= tdd.but) return;
-    if (tdd.difficulte > 2) tdd.points = 0;
-    else tdd.points -= 1;
-    // tdd.but += 1;
-    $(".score").addClass("delai")
-    majScore();
-    majMot();
-}
-
-function affichageChoix(etiquette, classe) {
-    $resultat = $(document.createElement("div")).addClass("choix")
-    for (var ch in tdd.choix) {
-        var $bouton = affichageBouton(tdd.choix[ch], ch);
-        $resultat.append($bouton);
-        tdd.choix[ch] = $bouton;
-    }
-    return $resultat;
-}
-
-function affichageBouton(etiquette, classe) {
-    var $resultat = $(document.createElement('div'))
-        .addClass(classe)
-        .html(etiquette)
-        .click(evtClic);
-    return $resultat;
-}
-
-function affichageScore() {
-    var $resultat = $('<div class="score"><span class="points">' + tdd.points + '</span>/<span class="but">' + tdd.but + '</span></div>');
-    return $resultat;
-}
-
-function evtClic(e) {
-    var $this = $(this);
-    var classe = $this.attr("class");
-    valider(classe);
-    majScore();
-    if (!verifierVictoire()) {
-        majMot();
-    }
-}
-
-function verifierVictoire() {
-    if (tdd.points < tdd.but) return false;
-    $(".tdd").html('<div class="bravo">Bravo!</div>');
-    return true;
-}
-
-function majScore() {
-    $("span.points").html(tdd.points);
-    $("span.but").html(tdd.but);
-}
 
