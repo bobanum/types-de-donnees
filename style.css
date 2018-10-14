@@ -1,0 +1,122 @@
+div.mot.on {	/* ATTENTION! Toujours laisser en premier */
+	-moz-transition:10s background-size linear;
+	background-size:0% 100%;
+}
+body {
+	font-family:arial;
+	background-color:#CCC;
+	margin:0;
+}
+div.interface {
+	margin:0 auto;
+	width:800px;
+}
+h1 a {
+	color:inherit;
+	text-decoration: none;
+}
+@font-face {
+	font-family:titre;
+	src:url(titre2.ttf);
+	font-weight:bold;
+}
+@font-face {
+	font-family:titre;
+	src:url(titre2.ttf);
+	font-style :bold;
+}
+@font-face {
+	font-family:bravo;
+	src:url(bravo.ttf);
+}
+h1 {
+	font-family:titre, arial;
+	text-align:center;
+	background-color:darkblue;
+	color:white;
+	margin:0;
+	padding:0em 0;
+	margin-bottom:.5em;
+	font-size: 300%;
+}
+div.bravo {
+  background: none repeat scroll 0 0 yellow;
+  color: darkblue;
+  font-family: bravo;
+  font-size: 280%;
+  letter-spacing: -0.14em;
+  padding: 0.25em 0;
+  text-align: center;
+}
+div.tdd {
+	width:12em;
+	margin:0 auto;
+	font-size:4em;
+	background-color:darkblue;
+	padding:.2em;
+}
+div.mot {
+	text-align:center;
+	font-weight:bold;
+	border:1px inset black;
+	background-image:
+		-moz-linear-gradient(top, rgba(255,255,255,.8), rgba(255,255,255,0) 50%, rgba(0,0,0,0) 50%, rgba(0,0,0,.3)),
+		-moz-linear-gradient(left, yellow, yellow)
+	;
+	background-size:100% 100%;
+	background-color:white;
+	-moz-transition:none;
+	background-repeat:no-repeat;
+}
+div.choix {
+	text-align:center;
+	font-weight:bold;
+	color:rgba(255,255,255,1);
+	text-shadow:-1px -1px 1px black;
+}
+div.choix div {
+	border-radius: 0.5em 0.5em 0.5em 0.5em;
+	/*box-shadow: 0.25em 0.25em 0.25em rgba(255, 255, 255, 0.5) inset, -0.25em -0.25em 0.25em rgba(0, 0, 0, 0.5) inset; */
+	box-shadow:
+		0.15em 0.15em 0.15em rgba(255, 255, 255, 0.8) inset,
+		-0.15em -0.15em 0.15em rgba(0, 0, 0, 0.5) inset
+	;
+	font-size: smaller;
+	margin: 0.2em .2em;
+	padding: 0.25em 0;
+	text-align: center;
+	display:inline-block;
+	width:7em;
+	border:.1em solid black;
+}
+div.choix div:hover {
+  box-shadow: 0.5em 0.5em 0.5em rgba(255, 255, 255, 0.5) inset, -0.5em -0.5em 0.5em rgba(0, 0, 0, 0.5) inset;
+  color:yellow;
+  border-color:yellow;
+}
+div.bon {
+	background-color:green;
+}
+div.mauvais {
+	background-color:red;
+}
+div.score {
+	color:white;
+	font-weight:bold;
+	text-align:center;
+	-moz-transition-property:color;
+	-moz-transition-duration:2s;
+}
+div.score.erreur {
+	color:red;
+	-moz-transition:none;
+	/* -moz-transition:color 0s; */
+}
+div.score.correct {
+	color:green;
+	-moz-transition:none;
+}
+div.score.delai {
+	color:orange;
+	-moz-transition:none;
+}
