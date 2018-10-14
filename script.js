@@ -1,5 +1,5 @@
 /*jslint browser:true, esnext:true*/
-/*global Tdd, tdd, $ */
+/*global Tdd, tdd */
 /*
 TODO:Choix de langue
 TODO:Difficulté
@@ -45,15 +45,17 @@ function bonmauvais() {
         tdd.mauvais = tdd.mauvais.concat(['Date', 'Postal Code', 'Name', 'File', 'Variable', 'Alphabet', 'Person', 'Base', 'Concatenation', 'Loop', 'Password', 'Alternative', 'Property', 'Instruction']);
     }
 
-    $(document.body).html('<h1><a href="index.htm">Dénichez les types de données</a></h1>');
-    $(document.body).append(Tdd.affichage());
-    $(window).bind("keydown", Tdd.evt.window.keydown);
+    document.body.innerHTML = '<h1><a href="index.html">Dénichez les types de données</a></h1>';
+    document.body.appendChild(Tdd.affichage());
+    window.addEventListener("keydown", Tdd.evt.window.keydown);
     majMot = function () {
         do {
             tdd.reponse = (Math.random() * (1 + tdd.ratioBonMauvais) < 1) ? "bon" : "mauvais";
             mot = Tdd.piger(tdd[tdd.reponse]);
         } while (mot === tdd.mot);
-        $('div.mot').text("??????").removeClass("on");
+        var dom_mot = document.querySelector('div.mot');
+        dom_mot.innerHTML = "??????";
+        dom_mot.classList.remove("on");
         tdd.mot = mot;
 
         Tdd.redemarrerChrono();
@@ -63,14 +65,14 @@ function bonmauvais() {
         if (classe === "bon" && tdd.reponse === "bon") {
             //On augmente les points
             tdd.points += 1;
-            $(".score").addClass("correct");
+            document.querySelector(".score").classList.add("correct");
         } else if (tdd.reponse === "bon" || classe === "bon") {
             //On reset les points et augmente le but
             tdd.points = 0;
             if (tdd.difficulte > 1) {
                 tdd.but += 1;
             }
-            $(".score").addClass("erreur");
+            document.querySelector(".score").classList.add("erreur");
         } else {
             // On passe à un autre mot
         }
@@ -119,16 +121,18 @@ function trouvertype() {
         tdd.mauvais = tdd.mauvais.concat(['Date', 'Postal Code', 'Name', 'File', 'Variable', 'Alphabet', 'Person', 'Base', 'Concatenation', 'Loop', 'Password', 'Alternative', 'Property', 'Instruction']);
     }
 
-    $(document.body).html('<h1><a href="index.htm">Donnez le bon type de données</h1></a>');
-    $(document.body).append(Tdd.affichage());
-    $(window).bind("keydown", Tdd.evt.window.keydown);
+    document.body.innerHTML = '<h1><a href="index.htm">Donnez le bon type de données</h1></a>';
+    document.body.appendChild(Tdd.affichage());
+    window.addEventListener("keydown", Tdd.evt.window.keydown);
     majMot = function () {
         var mot;
         do {
             tdd.reponse = Tdd.piger(['booleen', 'chaine', 'entier', 'reel']);
             mot = construire[tdd.reponse]();
         } while (mot === tdd.mot);
-        $('div.mot').text("??????").removeClass("on");
+        var dom_mot = document.querySelector('div.mot');
+        dom_mot.innerHTML = ("??????");
+        dom_mot.classList.remove("on");
         tdd.mot = mot;
 
         Tdd.redemarrerChrono();
@@ -138,12 +142,12 @@ function trouvertype() {
         if (classe === tdd.reponse) {
             //On augmente les points
             tdd.points += 1;
-            $(".score").addClass("correct");
+            document.querySelector(".score").classList.add("correct");
         } else {
             //On reset les points et augmente le but
             tdd.points -= 1;
             //tdd.but += 1;
-            $(".score").addClass("erreur");
+            document.querySelector(".score").classList.add("erreur");
         }
     };
     majMot();
