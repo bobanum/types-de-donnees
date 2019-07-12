@@ -19,17 +19,17 @@ h1 a {
 }
 @font-face {
 	font-family:titre;
-	src:url(titre2.ttf);
+	src:url(../medias/titre2.ttf);
 	font-weight:bold;
 }
 @font-face {
 	font-family:titre;
-	src:url(titre2.ttf);
+	src:url(../medias/titre2.ttf);
 	font-style :bold;
 }
 @font-face {
 	font-family:bravo;
-	src:url(bravo.ttf);
+	src:url(../medias/bravo.ttf);
 }
 h1 {
 	font-family:titre, arial;
