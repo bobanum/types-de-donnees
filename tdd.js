@@ -1,16 +1,9 @@
 /*jslint browser:true, esnext:true*/
-/*global majMot, valider */
 /*
 TODO:Choix de langue
 TODO:Difficulté
 TODO:Ajouter des mots pas rapport
 */
-var tdd = {
-    points: 0,
-    but: 10,
-    pause: 10, // Pause entre les mots en millisecondes
-    difficulte: 2, // 1=facile plus de temps, 2=moyen 1 seconde par mot restant ou 3=Difficile moitie moins de temps pour répondre
-};
 class Tdd {
     static recupererGet() {
         var resultat = {};
@@ -35,88 +28,82 @@ class Tdd {
         var mot = resultat.appendChild(document.createElement('div'));
         mot.classList.add('mot');
         mot.innerHTML = "??????";
-        mot.addEventListener('transitionend', Tdd.evt.mot.transitionend);
-        resultat.appendChild(this.affichageChoix());
+        mot.addEventListener('transitionend', this.evt.mot.transitionend);
+        resultat.appendChild(this.affichageChoix(this.jeu.choix));
         resultat.appendChild(this.affichageScore());
         return resultat;
     }
-    static piger(array) {
-        var pos = Math.floor(Math.random() * array.length);
-        return array[pos];
-    }
     static redemarrerChrono() {
-        var duration = tdd.but - tdd.points;
-        if (tdd.difficulte === 1) {
+        var duration = this.but - this.points;
+        if (this.difficulte === 1) {
             duration += 1;
-        } else if (tdd.difficulte >= 3) {
-            duration *= 1.5 - ((tdd.difficulte - 1) / (tdd.difficulte));
+        } else if (this.difficulte >= 3) {
+            duration *= 1.5 - ((this.difficulte - 1) / (this.difficulte));
         }
-        tdd.regleTransition['transition-duration'] = duration + "s";
-        setTimeout(function () {
+        this.regleTransition['transition-duration'] = duration + "s";
+        setTimeout(() => {
             var mot = document.querySelector('div.mot');
-            mot.innerHTML = tdd.mot;
+            mot.innerHTML = this.mot;
             mot.classList.add("on");
             var score = document.querySelector("div.score");
             score.classList.remove("correct");
             score.classList.remove("erreur");
             score.classList.remove("delai");
-        }, tdd.pause);
+        }, this.pause);
     }
     static majScore() {
-        document.querySelector("span.points").innerHTML = tdd.points;
-        document.querySelector("span.but").innerHTML = tdd.but;
+        document.querySelector("span.points").innerHTML = this.points;
+        document.querySelector("span.but").innerHTML = this.but;
     }
 
     static setEvts() {
         this.evt = {
             window: {
                 keydown: (e) => {
-                    for (var ch in tdd.choix) {
-                        var label = tdd.choix[ch].textContent.toUpperCase().charCodeAt(0);
+                    var choix = this.jeu.choix;
+                    for (var ch in choix) {
+                        var label = choix[ch].textContent.toUpperCase().charCodeAt(0);
                         if (e.keyCode === label || e.keyCode === label + 32) {
-                            tdd.choix[ch].dispatchEvent(new Event("click"));
+                            choix[ch].dispatchEvent(new Event("click"));
                         }
                     }
                 }
             },
             mot: {
                 transitionend: () => {
-                    if (tdd.points >= tdd.but) {
+                    if (this.points >= this.but) {
                         return;
                     }
-                    if (tdd.difficulte > 2) {
-                        tdd.points = 0;
+                    if (this.difficulte > 2) {
+                        this.points = 0;
                     } else {
-                        tdd.points -= 1;
+                        this.points -= 1;
                     }
-                    // tdd.but += 1;
+                    // this.but += 1;
                     document.querySelector(".score").classList.add("delai");
                     this.majScore();
-                    majMot();
+                    this.jeu.majMot();
                 }
             },
             bouton: {
                 click: (e) => {
                     var classe = e.target.getAttribute("class");
-                    valider(classe);
+                    this.jeu.valider(classe);
                     this.majScore();
                     if (!this.verifierVictoire()) {
-                        majMot();
+                        this.jeu.majMot();
                     }
                 }
             }
         };
     }
-    static init() {
-        this.setEvts();
-    }
-    static affichageChoix() {
+    static affichageChoix(choix) {
         var resultat = document.createElement("div");
         resultat.classList.add("choix");
-        for (let ch in tdd.choix) {
-            let bouton = this.affichageBouton(tdd.choix[ch], ch);
+        for (let ch in choix) {
+            let bouton = this.affichageBouton(choix[ch], ch);
             resultat.append(bouton);
-            tdd.choix[ch] = bouton;
+            choix[ch] = bouton;
         }
         return resultat;
     }
@@ -124,7 +111,7 @@ class Tdd {
         var resultat = document.createElement('div');
         resultat.setAttribute("class", classe);
         resultat.innerHTML = etiquette;
-        resultat.addEventListener("click", Tdd.evt.bouton.click);
+        resultat.addEventListener("click", this.evt.bouton.click);
         return resultat;
     }
     static affichageScore() {
@@ -132,19 +119,43 @@ class Tdd {
         resultat.classList.add("score");
         var points = resultat.appendChild(document.createElement("span"));
         points.classList.add("points");
-        points.innerHTML = tdd.points;
+        points.innerHTML = this.points;
         resultat.appendChild(document.createTextNode("/"));
         var but = resultat.appendChild(document.createElement("span"));
         but.classList.add("but");
-        but.innerHTML = tdd.but;
+        but.innerHTML = this.but;
         return resultat;
     }
     static verifierVictoire() {
-        if (tdd.points < tdd.but) {
+        if (this.points < this.but) {
             return false;
         }
         document.querySelector(".tdd").innerHTML = '<div class="bravo">Bravo!</div>';
         return true;
+    }
+    static loadJson(url) {
+        return new Promise(resolve => {
+            var xhr = new XMLHttpRequest();
+            xhr.open("get", url);
+            xhr.responseType = "json";
+            xhr.addEventListener("load", () => {
+                resolve(xhr.response);
+            });
+            xhr.send();
+        });
+    }
+    static init() {
+        this.setEvts();
+        this.get = this.recupererGet();
+        this.points = 0;
+        this.but = 10;
+        this.pause = 10; // Pause entre les mots en millisecondes
+        this.difficulte = 2; // 1=facile plus de temps, 2=moyen 1 seconde par mot restant ou 3=Difficile moitie moins de temps pour répondre
+        this.loadJson("mots.json").then(data => {
+            for (let k in data) {
+                this[k] = data[k];
+            }
+        });
     }
 }
 Tdd.init();
