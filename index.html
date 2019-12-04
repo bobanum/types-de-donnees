@@ -3,9 +3,15 @@
 <head>
 <title>Les types de données</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<script type="text/javascript" src="src/tdd.js"></script>
-<script type="text/javascript" src="src/script.js"></script>
 <link rel="stylesheet" type="text/css" href="src/style.css" />
+<script type="module">
+	import App from "./src/App.js";
+	App.load().then(jeu => {
+		if (jeu) {
+			jeu.demarrer();
+		}
+	})
+</script><div>sasasa</div>
 </head>
 
 <body>

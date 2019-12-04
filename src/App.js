@@ -4,7 +4,9 @@ TODO:Choix de langue
 TODO:Difficulté
 TODO:Ajouter des mots pas rapport
 */
-class Tdd {
+import TrouverType from "./TrouverType.js";
+import BonMauvais from "./BonMauvais.js";
+export default class App {
     static recupererGet() {
         var resultat = {};
         if (location.search === "") {
@@ -144,19 +146,34 @@ class Tdd {
             xhr.send();
         });
     }
-    static init() {
-        this.setEvts();
-        this.get = this.recupererGet();
-        this.points = 0;
-        this.but = 10;
-        this.pause = 10; // Pause entre les mots en millisecondes
-        this.difficulte = 2; // 1=facile plus de temps, 2=moyen 1 seconde par mot restant ou 3=Difficile moitie moins de temps pour répondre
-        this.loadJson("mots.json").then(data => {
+    static load() {
+        return Promise.all([
+            new Promise(resolve => {
+                window.addEventListener("load", function () {
+                    resolve();
+                });
+            }),
+            this.loadJson("mots.json"),
+        ]).then(data => {
+            data = data[1];
             for (let k in data) {
                 this[k] = data[k];
             }
+            console.log(data);
+            if (this.get.jeu === 'trouvertype') {
+                return new TrouverType(this.get);
+            } else if (this.get.jeu === 'bonmauvais') {
+                return new BonMauvais(this.get);
+            } else {
+                return false;
+            }
         });
+        
+    }
+    static init() {
+        this.setEvts();
+        this.get = this.recupererGet();
     }
 }
-Tdd.init();
+App.init();
 
